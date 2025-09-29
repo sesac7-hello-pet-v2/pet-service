@@ -17,27 +17,11 @@ public class PetService {
 
     private final PetRepository petRepository;
 
-    /**
-     * Pet 생성
-     */
     public PetResponse createPet(PetCreateRequest request) {
-        Pet pet = Pet.builder()
-                     .animalType(request.getAnimalType())
-                     .breed(request.getBreed())
-                     .gender(request.getGender())
-                     .health(request.getHealth())
-                     .age(request.getAge())
-                     .personality(request.getPersonality())
-                     .imageUrl(request.getImageUrl())
-                     .build();
-
-        Pet savedPet = petRepository.save(pet);
+        Pet savedPet = petRepository.save(request.toEntity());
         return PetResponse.from(savedPet);
     }
 
-    /**
-     * Pet 조회
-     */
     @Transactional(readOnly = true)
     public PetResponse getPet(Long petId) {
         Pet pet = findById(petId);
@@ -63,17 +47,11 @@ public class PetService {
         return PetResponse.from(pet);
     }
 
-    /**
-     * Pet 삭제
-     */
     public void deletePet(Long petId) {
         Pet pet = findById(petId);
         petRepository.delete(pet);
     }
 
-    /**
-     * Pet 단건 조회 (내부 메서드)
-     */
     private Pet findById(Long petId) {
         return petRepository.findById(petId)
                             .orElseThrow(() -> new EntityNotFoundException("Pet을 찾을 수 없습니다. id=" + petId));
