@@ -5,10 +5,14 @@ import hello.pet.petservice.entity.Gender;
 import hello.pet.petservice.entity.Health;
 import hello.pet.petservice.entity.Pet;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@Data
+@Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PetCreateRequest {
     private AnimalType animalType;
     private String breed;
