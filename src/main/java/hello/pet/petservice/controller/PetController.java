@@ -23,42 +23,27 @@ public class PetController {
 
     private final PetService petService;
 
-    /**
-     * Pet 생성
-     */
     @PostMapping
     public ResponseEntity<PetResponse> createPet(@RequestBody PetCreateRequest request) {
         PetResponse response = petService.createPet(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Pet 조회
-     */
     @GetMapping("/{petId}")
     public ResponseEntity<PetResponse> getPet(@PathVariable Long petId) {
         PetResponse response = petService.getPet(petId);
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Pet 수정
-     */
     @PutMapping("/{petId}")
-    public ResponseEntity<PetResponse> updatePet(
-            @PathVariable Long petId,
-            @RequestBody PetUpdateRequest request
-    ) {
+    public ResponseEntity<PetResponse> updatePet(@PathVariable Long petId, @RequestBody PetUpdateRequest request) {
         PetResponse response = petService.updatePet(petId, request);
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Pet 삭제
-     */
     @DeleteMapping("/{petId}")
-    public ResponseEntity<String> deletePet(@PathVariable Long petId) {
+    public ResponseEntity<Void> deletePet(@PathVariable Long petId) {
         petService.deletePet(petId);
-        return ResponseEntity.ok("Pet이 성공적으로 삭제되었습니다.");
+        return ResponseEntity.noContent().build();
     }
 }

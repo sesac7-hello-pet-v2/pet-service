@@ -20,21 +20,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pet {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private AnimalType animalType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String gender;
+    private Gender gender;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String health;
+    private Health health;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String personality;
 
     @Column(nullable = false)
@@ -43,11 +46,11 @@ public class Pet {
     @Column(nullable = false)
     private String breed;
 
-    @Column
+    @Column(length = 500)
     private String imageUrl;
 
-    public void updateInfo(String breed, String gender, int age, String health, String personality, String imageUrl,
-                           AnimalType animalType) {
+    public void updateInfo(String breed, Gender gender, int age, Health health, String personality,
+                           String imageUrl, AnimalType animalType) {
         this.breed = breed;
         this.gender = gender;
         this.age = age;
