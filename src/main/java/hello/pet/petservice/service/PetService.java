@@ -25,8 +25,8 @@ public class PetService {
                      .animalType(request.getAnimalType())
                      .breed(request.getBreed())
                      .gender(request.getGender())
-                     .age(request.getAge())
                      .health(request.getHealth())
+                     .age(request.getAge())
                      .personality(request.getPersonality())
                      .imageUrl(request.getImageUrl())
                      .build();
