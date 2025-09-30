@@ -4,6 +4,7 @@ import hello.pet.petservice.dto.request.PetCreateRequest;
 import hello.pet.petservice.dto.request.PetPatchRequest;
 import hello.pet.petservice.dto.response.PetResponse;
 import hello.pet.petservice.service.PetService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class PetController {
     private final PetService petService;
 
     @PostMapping
-    public ResponseEntity<PetResponse> createPet(@RequestBody PetCreateRequest request) {
+    public ResponseEntity<PetResponse> createPet(@Valid @RequestBody PetCreateRequest request) {
         PetResponse response = petService.createPet(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -36,7 +37,7 @@ public class PetController {
     }
 
     @PatchMapping("/{petId}")
-    public ResponseEntity<PetResponse> updatePet(@PathVariable Long petId, @RequestBody PetPatchRequest request) {
+    public ResponseEntity<PetResponse> updatePet(@PathVariable Long petId, @Valid @RequestBody PetPatchRequest request) {
         PetResponse response = petService.updatePet(petId, request);
         return ResponseEntity.ok(response);
     }
