@@ -1,5 +1,6 @@
 package hello.pet.petservice.entity;
 
+import hello.pet.petservice.dto.request.PetPatchRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,6 +26,9 @@ public class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long shelterId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AnimalType animalType;
@@ -49,14 +53,27 @@ public class Pet {
     @Column(length = 500)
     private String imageUrl;
 
-    public void updateInfo(String breed, Gender gender, int age, Health health, String personality,
-                           String imageUrl, AnimalType animalType) {
-        this.breed = breed;
-        this.gender = gender;
-        this.age = age;
-        this.health = health;
-        this.personality = personality;
-        this.imageUrl = imageUrl;
-        this.animalType = animalType;
+    public void updateInfo(PetPatchRequest request) {
+        if (request.getAnimalType() != null) {
+            this.animalType = request.getAnimalType();
+        }
+        if (request.getBreed() != null && !request.getBreed().isBlank()) {
+            this.breed = request.getBreed();
+        }
+        if (request.getGender() != null) {
+            this.gender = request.getGender();
+        }
+        if (request.getHealth() != null) {
+            this.health = request.getHealth();
+        }
+        if (request.getPersonality() != null && !request.getPersonality().isBlank()) {
+            this.personality = request.getPersonality();
+        }
+        if (request.getAge() != null && request.getAge() > 0) {
+            this.age = request.getAge();
+        }
+        if (request.getImageUrl() != null && request.getImageUrl().matches("^https?://.*")) {
+            this.imageUrl = request.getImageUrl();
+        }
     }
 }
