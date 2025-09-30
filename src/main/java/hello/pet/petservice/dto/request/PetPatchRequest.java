@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PetUpdateRequest {
+public class PetPatchRequest {
     private AnimalType animalType;
     private String breed;
     private Gender gender;

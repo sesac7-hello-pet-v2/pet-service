@@ -1,7 +1,7 @@
 package hello.pet.petservice.service;
 
 import hello.pet.petservice.dto.request.PetCreateRequest;
-import hello.pet.petservice.dto.request.PetUpdateRequest;
+import hello.pet.petservice.dto.request.PetPatchRequest;
 import hello.pet.petservice.dto.response.PetResponse;
 import hello.pet.petservice.entity.Pet;
 import hello.pet.petservice.repository.PetRepository;
@@ -28,22 +28,9 @@ public class PetService {
         return PetResponse.from(pet);
     }
 
-    /**
-     * Pet 수정
-     */
-    public PetResponse updatePet(Long petId, PetUpdateRequest request) {
+    public PetResponse updatePet(Long petId, PetPatchRequest request) {
         Pet pet = findById(petId);
-
-        pet.updateInfo(
-                request.getBreed(),
-                request.getGender(),
-                request.getAge(),
-                request.getHealth(),
-                request.getPersonality(),
-                request.getImageUrl(),
-                request.getAnimalType()
-        );
-
+        pet.updateInfo(request);
         return PetResponse.from(pet);
     }
 

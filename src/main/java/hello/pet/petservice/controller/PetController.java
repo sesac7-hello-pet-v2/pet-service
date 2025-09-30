@@ -1,7 +1,7 @@
 package hello.pet.petservice.controller;
 
 import hello.pet.petservice.dto.request.PetCreateRequest;
-import hello.pet.petservice.dto.request.PetUpdateRequest;
+import hello.pet.petservice.dto.request.PetPatchRequest;
 import hello.pet.petservice.dto.response.PetResponse;
 import hello.pet.petservice.service.PetService;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +35,8 @@ public class PetController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{petId}")
-    public ResponseEntity<PetResponse> updatePet(@PathVariable Long petId, @RequestBody PetUpdateRequest request) {
+    @PatchMapping("/{petId}")
+    public ResponseEntity<PetResponse> updatePet(@PathVariable Long petId, @RequestBody PetPatchRequest request) {
         PetResponse response = petService.updatePet(petId, request);
         return ResponseEntity.ok(response);
     }
