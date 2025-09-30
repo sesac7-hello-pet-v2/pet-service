@@ -26,6 +26,9 @@ public class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long shelterId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AnimalType animalType;

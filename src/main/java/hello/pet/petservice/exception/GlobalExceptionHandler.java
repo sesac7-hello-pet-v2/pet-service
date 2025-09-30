@@ -1,5 +1,7 @@
 package hello.pet.petservice.exception;
 
+import hello.pet.petservice.exception.dto.ExceptionResponse;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -24,5 +26,25 @@ public class GlobalExceptionHandler {
         });
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ExceptionResponse> forbiddenExceptionHandler(ForbiddenException e) {
+        return generateExceptionResponse(e, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> entityNotFoundExceptionHandler(EntityNotFoundException e) {
+        return generateExceptionResponse(e, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> responseExceptionHandler(Exception e) {
+        return generateExceptionResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<ExceptionResponse> generateExceptionResponse(Exception e, HttpStatus status) {
+        ExceptionResponse response = ExceptionResponse.of(e, status.value(), status.name());
+        return ResponseEntity.status(status).body(response);
     }
 }

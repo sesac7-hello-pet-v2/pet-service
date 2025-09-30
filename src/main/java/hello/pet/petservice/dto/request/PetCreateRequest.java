@@ -41,8 +41,9 @@ public class PetCreateRequest {
     @Pattern(regexp = "^https?://.*", message = "올바른 URL 형식이어야 합니다")
     private String imageUrl;
 
-    public Pet toEntity() {
+    public Pet toEntity(Long userId) {
         return Pet.builder()
+                  .shelterId(userId)
                   .animalType(animalType)
                   .breed(breed)
                   .gender(gender)
