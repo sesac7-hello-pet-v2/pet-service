@@ -1,0 +1,12 @@
+version: '3.8'
+name: hello-pet
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: database-service
+    environment:
+      POSTGRES_DB: db-pet
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
