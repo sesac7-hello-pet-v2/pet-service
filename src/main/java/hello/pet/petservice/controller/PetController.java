@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/pets")
+@RequestMapping("/v1/pets")
 @RequiredArgsConstructor
 public class PetController {
 
