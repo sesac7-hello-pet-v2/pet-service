@@ -3,7 +3,7 @@ spring:
     name: pet-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/db-pet
+    url: jdbc:postgresql://localhost:5434/db-pet
     username: postgres
     password: postgres
 
