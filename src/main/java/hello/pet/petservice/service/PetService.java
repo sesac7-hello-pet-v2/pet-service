@@ -62,6 +62,16 @@ public class PetService {
         petRepository.delete(pet);
     }
 
+    public void markAsAnnounced(Long petId) {
+        Pet pet = findById(petId);
+
+        if (Boolean.TRUE.equals(pet.getAnnounced())) {
+            throw new IllegalStateException("이미 공고가 등록된 펫입니다.");
+        }
+
+        pet.markAsAnnounced();
+    }
+
     private Pet findById(Long petId) {
         return petRepository.findById(petId)
                             .orElseThrow(() -> new EntityNotFoundException("Pet을 찾을 수 없습니다. id=" + petId));

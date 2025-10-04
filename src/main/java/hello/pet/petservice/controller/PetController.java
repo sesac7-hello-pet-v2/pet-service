@@ -56,4 +56,10 @@ public class PetController {
         petService.deletePet(petId, userId, userRole);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{petId}/mark-announced")
+    public ResponseEntity<Void> markAsAnnounced(@PathVariable Long petId) {
+        petService.markAsAnnounced(petId);
+        return ResponseEntity.noContent().build();
+    }
 }

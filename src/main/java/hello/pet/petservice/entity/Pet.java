@@ -53,6 +53,17 @@ public class Pet {
     @Column(length = 500)
     private String imageUrl;
 
+    @Column(nullable = false)
+    private Boolean announced = false; // 공고 등록 여부 (기본 false)
+
+    public void markAsAnnounced() {
+        this.announced = true;
+    }
+
+    public void unmarkAsAnnounced() {
+        this.announced = false;
+    }
+
     public void updateInfo(PetPatchRequest request) {
         if (request.getAnimalType() != null) {
             this.animalType = request.getAnimalType();
