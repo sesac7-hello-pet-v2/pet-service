@@ -7,6 +7,8 @@ import hello.pet.petservice.entity.Pet;
 import hello.pet.petservice.exception.ForbiddenException;
 import hello.pet.petservice.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,21 @@ public class PetService {
     public PetResponse getPet(Long petId) {
         Pet pet = findById(petId);
         return PetResponse.from(pet);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PetResponse> getPetsByShelter(Long shelterId, Boolean announced) {
+        List<Pet> pets;
+
+        if (announced == null) {
+            pets = petRepository.findAllByShelterId(shelterId);
+        } else {
+            pets = petRepository.findAllByShelterIdAndAnnounced(shelterId, announced);
+        }
+
+        return pets.stream()
+                   .map(PetResponse::from)
+                   .collect(Collectors.toList());
     }
 
     public PetResponse updatePet(Long petId, PetPatchRequest request, Long userId, String userRole) {

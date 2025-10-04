@@ -5,6 +5,7 @@ import hello.pet.petservice.dto.request.PetPatchRequest;
 import hello.pet.petservice.dto.response.PetResponse;
 import hello.pet.petservice.service.PetService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,6 +39,13 @@ public class PetController {
     @GetMapping("/{petId}")
     public ResponseEntity<PetResponse> getPet(@PathVariable Long petId) {
         PetResponse response = petService.getPet(petId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PetResponse>> getPets(@RequestParam Long shelterId,
+                                                     @RequestParam(required = false) Boolean announced) {
+        List<PetResponse> response = petService.getPetsByShelter(shelterId, announced);
         return ResponseEntity.ok(response);
     }
 
