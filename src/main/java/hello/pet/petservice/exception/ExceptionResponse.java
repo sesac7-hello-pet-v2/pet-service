@@ -1,4 +1,4 @@
-package hello.pet.petservice.exception.dto;
+package hello.pet.petservice.exception;
 
 import java.time.LocalDateTime;
 import lombok.Builder;

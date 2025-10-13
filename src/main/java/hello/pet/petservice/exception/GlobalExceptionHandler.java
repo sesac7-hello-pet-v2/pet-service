@@ -1,6 +1,5 @@
 package hello.pet.petservice.exception;
 
-import hello.pet.petservice.exception.dto.ExceptionResponse;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
