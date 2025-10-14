@@ -4,6 +4,7 @@ import hello.pet.petservice.dto.request.PetCreateRequest;
 import hello.pet.petservice.dto.request.PetPatchRequest;
 import hello.pet.petservice.dto.response.PetResponse;
 import hello.pet.petservice.entity.Pet;
+import hello.pet.petservice.exception.AlreadyAnnouncedException;
 import hello.pet.petservice.exception.ForbiddenException;
 import hello.pet.petservice.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -83,7 +84,7 @@ public class PetService {
         Pet pet = findById(petId);
 
         if (Boolean.TRUE.equals(pet.getAnnounced())) {
-            throw new IllegalStateException("이미 공고가 등록된 펫입니다.");
+            throw new AlreadyAnnouncedException("이미 공고가 등록된 펫입니다.");
         }
 
         pet.markAsAnnounced();

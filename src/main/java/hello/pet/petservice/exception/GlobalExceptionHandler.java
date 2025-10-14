@@ -37,6 +37,11 @@ public class GlobalExceptionHandler {
         return generateExceptionResponse(e, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(AlreadyAnnouncedException.class)
+    public ResponseEntity<ExceptionResponse> alreadyAnnouncedExceptionHandler(AlreadyAnnouncedException e) {
+        return generateExceptionResponse(e, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> responseExceptionHandler(Exception e) {
         return generateExceptionResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
