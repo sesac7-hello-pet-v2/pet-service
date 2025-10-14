@@ -43,8 +43,9 @@ public class PetController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PetResponse>> getPets(@RequestParam Long shelterId,
-                                                     @RequestParam(required = false) Boolean announced) {
+    public ResponseEntity<List<PetResponse>> getPets(@RequestHeader("X-User-Id") Long shelterId,
+                                                     @RequestParam(required = false) Boolean announced
+    ) {
         List<PetResponse> response = petService.getPetsByShelter(shelterId, announced);
         return ResponseEntity.ok(response);
     }
