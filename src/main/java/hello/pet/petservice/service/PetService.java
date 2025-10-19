@@ -90,6 +90,16 @@ public class PetService {
         pet.markAsAnnounced();
     }
 
+    public void markAsUnannounced(Long petId) {
+        Pet pet = findById(petId);
+
+        if (Boolean.FALSE.equals(pet.getAnnounced())) {
+            throw new IllegalStateException("이미 공고가 해제된 펫입니다.");
+        }
+
+        pet.unmarkAsAnnounced();
+    }
+
     private Pet findById(Long petId) {
         return petRepository.findById(petId)
                             .orElseThrow(() -> new EntityNotFoundException("Pet을 찾을 수 없습니다. id=" + petId));
