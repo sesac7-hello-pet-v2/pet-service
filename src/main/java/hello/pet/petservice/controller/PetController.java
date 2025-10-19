@@ -72,4 +72,10 @@ public class PetController {
         petService.markAsAnnounced(petId);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{petId}/unmark-announced")
+    public ResponseEntity<Void> markAsUnannounced(@PathVariable Long petId) {
+        petService.markAsUnannounced(petId);
+        return ResponseEntity.noContent().build();
+    }
 }
