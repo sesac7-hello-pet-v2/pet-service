@@ -38,7 +38,7 @@ public class PetCreateRequest {
     @Positive(message = "나이는 양수여야 합니다")
     private Integer age;
 
-    @Pattern(regexp = "^https?://.*", message = "올바른 URL 형식이어야 합니다")
+    @Pattern(regexp = "^$|^https?://.*", message = "올바른 URL 형식이어야 합니다")
     private String imageUrl;
 
     public Pet toEntity(Long userId) {
