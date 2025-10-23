@@ -22,6 +22,7 @@ public class PetResponse {
     private String personality;
     private Integer age;
     private String imageUrl;
+    private Boolean announced;
 
     public static PetResponse from(Pet pet) {
         return PetResponse.builder()
@@ -33,6 +34,7 @@ public class PetResponse {
                           .personality(pet.getPersonality())
                           .age(pet.getAge())
                           .imageUrl(pet.getImageUrl())
+                          .announced(pet.getAnnounced())
                           .build();
     }
 }
