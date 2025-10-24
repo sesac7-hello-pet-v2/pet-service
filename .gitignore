@@ -39,9 +39,5 @@ out/
 ### Claude ###
 .claude/
 
-### Helm Secrets (민감한 설정 파일) ###
-helm-chart/**/*.secret.yaml
-helm-chart/**/*.secret.yml
-helm-chart/**/secrets/
-helm-chart/**/values-*.secret.yaml
-helm-chart/**/values-*.secret.yml
+### Helm Chart 전체 제외 ###
+helm-chart/
