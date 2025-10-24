@@ -3,20 +3,8 @@ name: pet-service
 description: A Helm chart for Hello PET pet-service microservice
 type: application
 
-# Chart 버전 (Chart 자체의 버전)
+# Helm Chart 버전 (템플릿 수정 시 수동 변경)
 version: 0.1.0
 
-# 애플리케이션 버전 (컨테이너 이미지 태그)
-appVersion: "1.0.0"
-
-keywords:
-  - pet-service
-  - microservice
-  - hello-pet
-
-maintainers:
-  - name: Hello PET Team
-    email: team@hellopet.com
-
-# 필요한 Kubernetes 버전
-kubeVersion: ">=1.24.0-0"
+# 애플리케이션 버전 (이미지 태그, CI/CD에서 자동 갱신)
+appVersion: "1.0.0" # 기본값, 배포 시 자동으로 덮어씌워짐

@@ -1,13 +1,9 @@
-{{/*
-Expand the name of the chart.
-*/}}
+{{/* Expand the name of the chart. */}}
 {{- define "pet-service.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{/*
-Create a default fully qualified app name.
-*/}}
+{{/* Create a default fully qualified app name. */}}
 {{- define "pet-service.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
@@ -21,16 +17,12 @@ Create a default fully qualified app name.
 {{- end }}
 {{- end }}
 
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
+{{/* Create chart name and version as used by the chart label. */}}
 {{- define "pet-service.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{/*
-Common labels
-*/}}
+{{/* Common labels */}}
 {{- define "pet-service.labels" -}}
 helm.sh/chart: {{ include "pet-service.chart" . }}
 {{ include "pet-service.selectorLabels" . }}
@@ -40,17 +32,13 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
-{{/*
-Selector labels
-*/}}
+{{/* Selector labels */}}
 {{- define "pet-service.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "pet-service.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Create the name of the service account to use
-*/}}
+{{/* Create the name of the service account to use */}}
 {{- define "pet-service.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
 {{- default (include "pet-service.fullname" .) .Values.serviceAccount.name }}
@@ -59,9 +47,7 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-{{/*
-Namespace
-*/}}
+{{/* Namespace */}}
 {{- define "pet-service.namespace" -}}
 {{- default .Values.namespace .Release.Namespace }}
 {{- end }}
