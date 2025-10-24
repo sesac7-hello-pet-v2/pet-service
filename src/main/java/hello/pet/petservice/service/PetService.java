@@ -1,11 +1,15 @@
 package hello.pet.petservice.service;
 
 import hello.pet.petservice.dto.request.PetCreateRequest;
-import hello.pet.petservice.dto.request.PetUpdateRequest;
+import hello.pet.petservice.dto.request.PetPatchRequest;
 import hello.pet.petservice.dto.response.PetResponse;
 import hello.pet.petservice.entity.Pet;
+import hello.pet.petservice.exception.AlreadyAnnouncedException;
+import hello.pet.petservice.exception.ForbiddenException;
 import hello.pet.petservice.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,63 +21,85 @@ public class PetService {
 
     private final PetRepository petRepository;
 
-    /**
-     * Pet 생성
-     */
-    public PetResponse createPet(PetCreateRequest request) {
-        Pet pet = Pet.builder()
-                     .animalType(request.getAnimalType())
-                     .breed(request.getBreed())
-                     .gender(request.getGender())
-                     .age(request.getAge())
-                     .health(request.getHealth())
-                     .personality(request.getPersonality())
-                     .imageUrl(request.getImageUrl())
-                     .build();
+    public PetResponse createPet(PetCreateRequest request, Long userId, String userRole) {
+        if (!"SHELTER".equals(userRole)) {
+            throw new ForbiddenException("보호소 권한이 필요합니다.");
+        }
 
-        Pet savedPet = petRepository.save(pet);
+        Pet savedPet = petRepository.save(request.toEntity(userId));
         return PetResponse.from(savedPet);
     }
 
-    /**
-     * Pet 조회
-     */
     @Transactional(readOnly = true)
     public PetResponse getPet(Long petId) {
         Pet pet = findById(petId);
         return PetResponse.from(pet);
     }
 
-    /**
-     * Pet 수정
-     */
-    public PetResponse updatePet(Long petId, PetUpdateRequest request) {
+    @Transactional(readOnly = true)
+    public List<PetResponse> getPetsByShelter(Long shelterId, Boolean announced) {
+        List<Pet> pets;
+
+        if (announced == null) {
+            pets = petRepository.findAllByShelterId(shelterId);
+        } else {
+            pets = petRepository.findAllByShelterIdAndAnnounced(shelterId, announced);
+        }
+
+        return pets.stream()
+                   .map(PetResponse::from)
+                   .collect(Collectors.toList());
+    }
+
+    public PetResponse updatePet(Long petId, PetPatchRequest request, Long userId, String userRole) {
+        if (!"SHELTER".equals(userRole)) {
+            throw new ForbiddenException("보호소 권한이 필요합니다.");
+        }
+
         Pet pet = findById(petId);
 
-        pet.updateInfo(
-                request.getBreed(),
-                request.getGender(),
-                request.getAge(),
-                request.getHealth(),
-                request.getPersonality(),
-                request.getImageUrl(),
-                request.getAnimalType()
-        );
+        if (!pet.getShelterId().equals(userId)) {
+            throw new ForbiddenException("해당 펫을 수정할 권한이 없습니다.");
+        }
 
+        pet.updateInfo(request);
         return PetResponse.from(pet);
     }
 
-    /**
-     * Pet 삭제
-     */
-    public void deletePet(Long petId) {
+    public void deletePet(Long petId, Long userId, String userRole) {
+        if (!"SHELTER".equals(userRole)) {
+            throw new ForbiddenException("보호소 권한이 필요합니다.");
+        }
+
         Pet pet = findById(petId);
+
+        if (!pet.getShelterId().equals(userId)) {
+            throw new ForbiddenException("해당 펫을 삭제할 권한이 없습니다.");
+        }
+
         petRepository.delete(pet);
     }
 
-    /**
-     * Pet 단건 조회 (내부 메서드)
-     */
+    public void markAsAnnounced(Long petId) {
+        Pet pet = findById(petId);
+
+        if (Boolean.TRUE.equals(pet.getAnnounced())) {
+            throw new AlreadyAnnouncedException("이미 공고가 등록된 펫입니다.");
+        }
+
+        pet.markAsAnnounced();
+    }
+
+    public void markAsUnannounced(Long petId) {
+        Pet pet = findById(petId);
+
+        if (Boolean.FALSE.equals(pet.getAnnounced())) {
+            throw new IllegalStateException("이미 공고가 해제된 펫입니다.");
+        }
+
+        pet.unmarkAsAnnounced();
+    }
+
     private Pet findById(Long petId) {
         return petRepository.findById(petId)
                             .orElseThrow(() -> new EntityNotFoundException("Pet을 찾을 수 없습니다. id=" + petId));
