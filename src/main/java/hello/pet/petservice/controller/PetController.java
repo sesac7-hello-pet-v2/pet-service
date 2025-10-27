@@ -44,9 +44,9 @@ public class PetController {
 
     @GetMapping
     public ResponseEntity<List<PetResponse>> getPets(@RequestHeader("X-User-Id") Long shelterId,
-                                                     @RequestParam(required = false) Boolean announced
+                                                     @RequestParam(required = false) String status
     ) {
-        List<PetResponse> response = petService.getPetsByShelter(shelterId, announced);
+        List<PetResponse> response = petService.getPetsByShelter(shelterId, status);
         return ResponseEntity.ok(response);
     }
 
@@ -68,14 +68,26 @@ public class PetController {
     }
 
     @PatchMapping("/{petId}/mark-announced")
-    public ResponseEntity<Void> markAsAnnounced(@PathVariable Long petId) {
-        petService.markAsAnnounced(petId);
+    public ResponseEntity<Void> markAsAnnounced(@PathVariable Long petId,
+                                                @RequestHeader("X-User-Id") Long userId,
+                                                @RequestHeader("X-User-Role") String userRole) {
+        petService.markAsAnnounced(petId, userId, userRole);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{petId}/unmark-announced")
-    public ResponseEntity<Void> markAsUnannounced(@PathVariable Long petId) {
-        petService.markAsUnannounced(petId);
+    @PatchMapping("/{petId}/mark-available")
+    public ResponseEntity<Void> markAsAvailable(@PathVariable Long petId,
+                                                @RequestHeader("X-User-Id") Long userId,
+                                                @RequestHeader("X-User-Role") String userRole) {
+        petService.markAsAvailable(petId, userId, userRole);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{petId}/mark-adopted")
+    public ResponseEntity<Void> markAsAdopted(@PathVariable Long petId,
+                                              @RequestHeader("X-User-Id") Long userId,
+                                              @RequestHeader("X-User-Role") String userRole) {
+        petService.markAsAdopted(petId, userId, userRole);
         return ResponseEntity.noContent().build();
     }
 }
