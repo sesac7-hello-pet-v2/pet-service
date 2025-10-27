@@ -51,7 +51,6 @@ public class PetCreateRequest {
                   .age(age)
                   .personality(personality)
                   .imageUrl(imageUrl)
-                  .announced(false)
                   .build();
     }
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,15 +54,23 @@ public class Pet {
     @Column(length = 500)
     private String imageUrl;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean announced = false; // 공고 등록 여부 (기본 false)
+    @Builder.Default
+    private PetStatus status = PetStatus.AVAILABLE;
+
+    private LocalDateTime deletedAt;
 
     public void markAsAnnounced() {
-        this.announced = true;
+        this.status = PetStatus.ANNOUNCED;
     }
 
-    public void unmarkAsAnnounced() {
-        this.announced = false;
+    public void markAsAvailable() {
+        this.status = PetStatus.AVAILABLE;
+    }
+
+    public void markAsAdopted() {
+        this.status = PetStatus.ADOPTED;
     }
 
     public void updateInfo(PetPatchRequest request) {
@@ -86,5 +95,15 @@ public class Pet {
         if (request.getImageUrl() != null && request.getImageUrl().matches("^https?://.*")) {
             this.imageUrl = request.getImageUrl();
         }
+    }
+
+    public void softDelete() {
+        this.status = PetStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void restore() {
+        this.status = PetStatus.AVAILABLE;
+        this.deletedAt = null;
     }
 }
