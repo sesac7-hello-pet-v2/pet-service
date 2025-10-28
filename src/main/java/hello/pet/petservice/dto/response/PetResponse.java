@@ -45,19 +45,39 @@ public class PetResponse {
 
     /**
      * 썸네일 URL 생성
+     * imageS3Key: "1/pet/1234567890_abc12.jpg"
+     * 결과: "https://.../1/pet/1234567890_abc12_thumb.jpg"
      */
     private static String generateThumbnailUrl(String imageS3Key, String s3BaseUrl, String defaultImageUrl) {
-        return imageS3Key != null
-               ? s3BaseUrl + "/" + imageS3Key + "_thumb.jpg"
-               : defaultImageUrl;
+        if (imageS3Key == null) {
+            return defaultImageUrl;
+        }
+        // 확장자를 제거하고 _thumb를 추가한 뒤 다시 확장자를 붙임
+        int lastDotIndex = imageS3Key.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            String baseName = imageS3Key.substring(0, lastDotIndex);
+            String extension = imageS3Key.substring(lastDotIndex);
+            return s3BaseUrl + "/" + baseName + "_thumb" + extension;
+        }
+        return s3BaseUrl + "/" + imageS3Key + "_thumb";
     }
 
     /**
      * 피드 이미지 URL 생성
+     * imageS3Key: "1/pet/1234567890_abc12.jpg"
+     * 결과: "https://.../1/pet/1234567890_abc12_feed.jpg"
      */
     private static String generateImageUrl(String imageS3Key, String s3BaseUrl, String defaultImageUrl) {
-        return imageS3Key != null
-               ? s3BaseUrl + "/" + imageS3Key + "_feed.jpg"
-               : defaultImageUrl;
+        if (imageS3Key == null) {
+            return defaultImageUrl;
+        }
+        // 확장자를 제거하고 _feed를 추가한 뒤 다시 확장자를 붙임
+        int lastDotIndex = imageS3Key.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            String baseName = imageS3Key.substring(0, lastDotIndex);
+            String extension = imageS3Key.substring(lastDotIndex);
+            return s3BaseUrl + "/" + baseName + "_feed" + extension;
+        }
+        return s3BaseUrl + "/" + imageS3Key + "_feed";
     }
 }
