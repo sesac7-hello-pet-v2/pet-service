@@ -4,15 +4,13 @@ import hello.pet.petservice.entity.AnimalType;
 import hello.pet.petservice.entity.Gender;
 import hello.pet.petservice.entity.Health;
 import hello.pet.petservice.entity.Pet;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Pattern;
 
 @Getter
 @Builder
@@ -38,10 +36,7 @@ public class PetCreateRequest {
     @Positive(message = "나이는 양수여야 합니다")
     private Integer age;
 
-    @Pattern(regexp = "^$|^https?://.*", message = "올바른 URL 형식이어야 합니다")
-    private String imageUrl;
-
-    public Pet toEntity(Long userId) {
+    public Pet toEntity(Long userId, String imageS3Key) {
         return Pet.builder()
                   .shelterId(userId)
                   .animalType(animalType)
@@ -50,7 +45,7 @@ public class PetCreateRequest {
                   .health(health)
                   .age(age)
                   .personality(personality)
-                  .imageUrl(imageUrl)
+                  .imageS3Key(imageS3Key)
                   .build();
     }
 }

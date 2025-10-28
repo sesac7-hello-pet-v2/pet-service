@@ -7,34 +7,46 @@ import hello.pet.petservice.entity.Pet;
 import hello.pet.petservice.entity.PetStatus;
 import hello.pet.petservice.exception.AlreadyAnnouncedException;
 import hello.pet.petservice.exception.ForbiddenException;
+import hello.pet.petservice.facade.ImageServiceFacade;
 import hello.pet.petservice.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class PetService {
 
     private final PetRepository petRepository;
+    private final ImageServiceFacade imageServiceFacade;
 
-    public PetResponse createPet(PetCreateRequest request, Long userId, String userRole) {
-        if (!"SHELTER".equals(userRole)) {
-            throw new ForbiddenException("보호소 권한이 필요합니다.");
-        }
+    @Value("${S3_BASE_URL}")
+    private String s3BaseUrl;
 
-        Pet savedPet = petRepository.save(request.toEntity(userId));
-        return PetResponse.from(savedPet);
+    @Value("${DEFAULT_PET_IMAGE_URL}")
+    private String defaultPetImageUrl;
+
+    public PetResponse createPet(PetCreateRequest request, MultipartFile image, Long userId, String userRole) {
+        validateShelterRole(userRole);
+
+        String imageS3Key = imageServiceFacade.uploadPetImage(userId, image);
+        Pet savedPet = petRepository.save(request.toEntity(userId, imageS3Key));
+
+        return PetResponse.from(savedPet, s3BaseUrl, defaultPetImageUrl);
     }
 
     @Transactional(readOnly = true)
     public PetResponse getPet(Long petId) {
         Pet pet = findById(petId);
-        return PetResponse.from(pet);
+        return PetResponse.from(pet, s3BaseUrl, defaultPetImageUrl);
     }
 
     @Transactional(readOnly = true)
@@ -49,8 +61,8 @@ public class PetService {
         }
 
         return pets.stream()
-                   .map(PetResponse::from)
-                   .collect(Collectors.toList());
+                   .map(pet -> PetResponse.from(pet, s3BaseUrl, defaultPetImageUrl))
+                   .toList();
     }
 
     public PetResponse updatePet(Long petId, PetPatchRequest request, Long userId, String userRole) {
@@ -58,7 +70,7 @@ public class PetService {
         validateShelterAuthority(userId, userRole, pet);
 
         pet.updateInfo(request);
-        return PetResponse.from(pet);
+        return PetResponse.from(pet, s3BaseUrl, defaultPetImageUrl);
     }
 
     public void deletePet(Long petId, Long userId, String userRole) {
@@ -119,11 +131,14 @@ public class PetService {
                             .orElseThrow(() -> new EntityNotFoundException("Pet을 찾을 수 없습니다. id=" + petId));
     }
 
-    private void validateShelterAuthority(Long userId, String userRole, Pet pet) {
+    private void validateShelterRole(String userRole) {
         if (!"SHELTER".equals(userRole)) {
             throw new ForbiddenException("보호소 권한이 필요합니다.");
         }
+    }
 
+    private void validateShelterAuthority(Long userId, String userRole, Pet pet) {
+        validateShelterRole(userRole);
         if (!pet.getShelterId().equals(userId)) {
             throw new ForbiddenException("해당 펫을 관리할 권한이 없습니다.");
         }

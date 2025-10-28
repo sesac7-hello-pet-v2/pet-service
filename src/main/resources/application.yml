@@ -2,6 +2,13 @@ spring:
   application:
     name: pet-service
 
+
+  servlet:
+    multipart:
+      # 펫 이미지 업로드 시 파일 크기 제한 설정
+      max-file-size: 10MB       # max-file-size: 개별 파일의 최대 크기
+      max-request-size: 10MB    # max-request-size: 전체 요청(파일 + 데이터)의 최대 크기
+
   datasource:
     url: jdbc:postgresql://localhost:5434/db-pet
     username: postgres
@@ -18,3 +25,12 @@ spring:
 
 server:
   port: 8085
+
+# S3 버킷의 베이스 URL - 이미지 조회 시 사용
+# imageS3Key와 조합하여 실제 이미지 URL 생성
+# 예: {S3_BASE_URL}/{imageS3Key}_thumb.jpg (썸네일)
+# 예: {S3_BASE_URL}/{imageS3Key}_feed.jpg (피드용)
+S3_BASE_URL: https://sesac-hello-pet-image-bucket.s3.ap-northeast-2.amazonaws.com
+
+# S3 key가 없는 경우 사용되는 기본 펫 이미지
+DEFAULT_PET_IMAGE_URL: https://sesac-hello-pet-image-bucket.s3.ap-northeast-2.amazonaws.com/default/pet-default.png
