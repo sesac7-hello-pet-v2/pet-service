@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,18 +51,32 @@ public class Pet {
     @Column(nullable = false)
     private String breed;
 
-    @Column(length = 500)
-    private String imageUrl;
+    /**
+     * S3에 저장된 이미지의 키 값
+     * 예: "123/pet/1234567890_abc12.jpg"
+     * 실제 URL은 S3_BASE_URL + imageS3Key로 조합
+     * null인 경우 기본 이미지 사용
+     */
+    @Column(name = "image_s3_key", length = 500)
+    private String imageS3Key;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean announced = false; // 공고 등록 여부 (기본 false)
+    @Builder.Default
+    private PetStatus status = PetStatus.AVAILABLE;
+
+    private LocalDateTime deletedAt;
 
     public void markAsAnnounced() {
-        this.announced = true;
+        this.status = PetStatus.ANNOUNCED;
     }
 
-    public void unmarkAsAnnounced() {
-        this.announced = false;
+    public void markAsAvailable() {
+        this.status = PetStatus.AVAILABLE;
+    }
+
+    public void markAsAdopted() {
+        this.status = PetStatus.ADOPTED;
     }
 
     public void updateInfo(PetPatchRequest request) {
@@ -83,8 +98,15 @@ public class Pet {
         if (request.getAge() != null && request.getAge() > 0) {
             this.age = request.getAge();
         }
-        if (request.getImageUrl() != null && request.getImageUrl().matches("^https?://.*")) {
-            this.imageUrl = request.getImageUrl();
-        }
+    }
+
+    public void softDelete() {
+        this.status = PetStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void restore() {
+        this.status = PetStatus.AVAILABLE;
+        this.deletedAt = null;
     }
 }
