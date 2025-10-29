@@ -88,7 +88,7 @@ public class PetService {
         }
 
         if (announcementServiceFacade.hasActiveAnnouncements(petId)) {
-            throw new IllegalStateException("이 펫은 공고에 등록되어 있어 삭제할 수 없습니다. 먼저 공고를 삭제해주세요.");
+            throw new IllegalStateException("이 펫은 공고에 등록되어 있어 삭제할 수 없습니다.");
         }
 
         pet.softDelete();
