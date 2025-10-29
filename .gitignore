@@ -38,3 +38,6 @@ out/
 
 ### Claude ###
 .claude/
+
+### Helm Chart 전체 제외 ###
+helm-chart/
