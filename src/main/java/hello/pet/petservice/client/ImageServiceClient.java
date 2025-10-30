@@ -9,7 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @FeignClient(
         name = "image-service",
-        url = "${IMAGE_SERVICE_URL:http://localhost:8088}"
+        url = "${IMAGE_SERVICE_URL:http://localhost:8088}",
+        configuration = hello.pet.petservice.config.FeignConfig.class
 )
 public interface ImageServiceClient {
 
