@@ -22,26 +22,10 @@ public class PetController {
     private final PetService petService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PetResponse> createPet(@RequestParam("animalType") String animalType,
-                                                 @RequestParam("breed") String breed,
-                                                 @RequestParam("gender") String gender,
-                                                 @RequestParam("health") String health,
-                                                 @RequestParam("personality") String personality,
-                                                 @RequestParam("age") Integer age,
+    public ResponseEntity<PetResponse> createPet(@Valid @RequestPart("pet") PetCreateRequest request,
                                                  @RequestPart(value = "image", required = false) MultipartFile image,
                                                  @RequestHeader("X-User-Id") Long userId,
                                                  @RequestHeader("X-User-Role") String userRole) {
-        // RequestParam으로 받은 필드들을 PetCreateRequest 객체로 변환
-        // Spring Cloud Gateway MVC의 multipart + JSON Blob 처리 문제를 우회하기 위한 변경
-        PetCreateRequest request = PetCreateRequest.builder()
-                .animalType(hello.pet.petservice.entity.AnimalType.valueOf(animalType))
-                .breed(breed)
-                .gender(hello.pet.petservice.entity.Gender.valueOf(gender))
-                .health(hello.pet.petservice.entity.Health.valueOf(health))
-                .personality(personality)
-                .age(age)
-                .build();
-
         PetResponse response = petService.createPet(request, image, userId, userRole);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
