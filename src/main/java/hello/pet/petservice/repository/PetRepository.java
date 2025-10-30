@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface PetRepository extends JpaRepository<Pet, Long> {
     Optional<Pet> findByIdAndStatusNot(Long id, PetStatus status);
 
-    List<Pet> findAllByShelterIdAndStatusNot(Long shelterId, PetStatus status);
+    List<Pet> findAllByShelterId(Long shelterId);
 
     List<Pet> findAllByShelterIdAndStatus(Long shelterId, PetStatus status);
 }

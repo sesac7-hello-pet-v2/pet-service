@@ -11,8 +11,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +38,8 @@ public class PetCreateRequest {
     @NotNull(message = "나이는 필수입니다")
     @Positive(message = "나이는 양수여야 합니다")
     private Integer age;
+
+    private MultipartFile image;
 
     public Pet toEntity(Long userId, String imageS3Key) {
         return Pet.builder()

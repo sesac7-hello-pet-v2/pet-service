@@ -5,9 +5,7 @@ import hello.pet.petservice.dto.request.PetPatchRequest;
 import hello.pet.petservice.dto.response.PetResponse;
 import hello.pet.petservice.entity.Pet;
 import hello.pet.petservice.entity.PetStatus;
-import hello.pet.petservice.exception.AlreadyAnnouncedException;
 import hello.pet.petservice.exception.ForbiddenException;
-import hello.pet.petservice.facade.AnnouncementServiceFacade;
 import hello.pet.petservice.facade.ImageServiceFacade;
 import hello.pet.petservice.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,7 +26,6 @@ public class PetService {
 
     private final PetRepository petRepository;
     private final ImageServiceFacade imageServiceFacade;
-    private final AnnouncementServiceFacade announcementServiceFacade;
 
     @Value("${S3_BASE_URL}")
     private String s3BaseUrl;
@@ -47,7 +44,8 @@ public class PetService {
 
     @Transactional(readOnly = true)
     public PetResponse getPet(Long petId) {
-        Pet pet = findById(petId);
+        Pet pet = petRepository.findById(petId)
+                               .orElseThrow(() -> new EntityNotFoundException("Pet을 찾을 수 없습니다. id=" + petId));
         return PetResponse.from(pet, s3BaseUrl, defaultPetImageUrl);
     }
 
@@ -56,7 +54,7 @@ public class PetService {
         List<Pet> pets;
 
         if (status == null) {
-            pets = petRepository.findAllByShelterIdAndStatusNot(shelterId, PetStatus.DELETED);
+            pets = petRepository.findAllByShelterId(shelterId);
         } else {
             PetStatus petStatus = PetStatus.valueOf(status.toUpperCase());
             pets = petRepository.findAllByShelterIdAndStatus(shelterId, petStatus);
@@ -71,6 +69,10 @@ public class PetService {
         Pet pet = findById(petId);
         validateShelterAuthority(userId, userRole, pet);
 
+        if (pet.getStatus() != PetStatus.AVAILABLE) {
+            throw new IllegalStateException("입양 가능 상태의 펫만 수정할 수 있습니다.");
+        }
+
         pet.updateInfo(request);
         return PetResponse.from(pet, s3BaseUrl, defaultPetImageUrl);
     }
@@ -79,16 +81,8 @@ public class PetService {
         Pet pet = findById(petId);
         validateShelterAuthority(userId, userRole, pet);
 
-        if (pet.getStatus() == PetStatus.DELETED) {
-            throw new IllegalStateException("이미 삭제된 펫입니다.");
-        }
-
-        if (pet.getStatus() == PetStatus.ADOPTED) {
-            throw new IllegalStateException("입양 완료된 펫은 삭제할 수 없습니다.");
-        }
-
-        if (announcementServiceFacade.hasActiveAnnouncements(petId)) {
-            throw new IllegalStateException("이 펫은 공고에 등록되어 있어 삭제할 수 없습니다.");
+        if (pet.getStatus() != PetStatus.AVAILABLE) {
+            throw new IllegalStateException("입양 가능 상태의 펫만 삭제할 수 있습니다.");
         }
 
         pet.softDelete();
@@ -99,12 +93,8 @@ public class PetService {
         Pet pet = findById(petId);
         validateShelterAuthority(userId, userRole, pet);
 
-        if (pet.getStatus() == PetStatus.ANNOUNCED) {
-            throw new AlreadyAnnouncedException("이미 공고가 등록된 펫입니다.");
-        }
-
-        if (pet.getStatus() == PetStatus.ADOPTED) {
-            throw new IllegalStateException("이미 입양된 펫은 공고할 수 없습니다.");
+        if (pet.getStatus() != PetStatus.AVAILABLE) {
+            throw new IllegalStateException("입양 가능 상태의 펫만 공고 등록할 수 있습니다.");
         }
 
         pet.markAsAnnounced();
