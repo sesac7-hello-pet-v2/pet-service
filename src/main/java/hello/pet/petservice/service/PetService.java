@@ -7,6 +7,7 @@ import hello.pet.petservice.entity.Pet;
 import hello.pet.petservice.entity.PetStatus;
 import hello.pet.petservice.exception.AlreadyAnnouncedException;
 import hello.pet.petservice.exception.ForbiddenException;
+import hello.pet.petservice.facade.AnnouncementServiceFacade;
 import hello.pet.petservice.facade.ImageServiceFacade;
 import hello.pet.petservice.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,6 +28,7 @@ public class PetService {
 
     private final PetRepository petRepository;
     private final ImageServiceFacade imageServiceFacade;
+    private final AnnouncementServiceFacade announcementServiceFacade;
 
     @Value("${S3_BASE_URL}")
     private String s3BaseUrl;
@@ -83,6 +85,10 @@ public class PetService {
 
         if (pet.getStatus() == PetStatus.ADOPTED) {
             throw new IllegalStateException("입양 완료된 펫은 삭제할 수 없습니다.");
+        }
+
+        if (announcementServiceFacade.hasActiveAnnouncements(petId)) {
+            throw new IllegalStateException("이 펫은 공고에 등록되어 있어 삭제할 수 없습니다.");
         }
 
         pet.softDelete();
