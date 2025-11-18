@@ -90,14 +90,30 @@ public class PetService {
     }
 
     public void markAsAnnounced(Long petId, Long userId, String userRole) {
+        log.info("펫 상태를 공고 중으로 변경 - petId: {}, userId: {}", petId, userId);
+
         Pet pet = findById(petId);
         validateShelterAuthority(userId, userRole, pet);
 
-        if (pet.getStatus() != PetStatus.AVAILABLE) {
-            throw new IllegalStateException("입양 가능 상태의 펫만 공고 등록할 수 있습니다.");
+        // 멱등성: 이미 ANNOUNCED면 스킵
+        if (pet.getStatus() == PetStatus.ANNOUNCED) {
+            log.info("이미 ANNOUNCED 상태입니다. 스킵합니다. petId: {}", petId);
+            return;
+        }
+
+        // AVAILABLE 상태 또는 Saga 보상 흐름의 ADOPTED 상태에서만 변경 가능
+        if (pet.getStatus() != PetStatus.AVAILABLE && pet.getStatus() != PetStatus.ADOPTED) {
+            throw new IllegalStateException(
+                    String.format("현재 상태(%s)에서는 공고 등록할 수 없습니다. AVAILABLE 또는 ADOPTED 상태여야 합니다.",
+                            pet.getStatus())
+            );
         }
 
         pet.markAsAnnounced();
+        petRepository.save(pet);
+
+        log.info("펫 상태를 공고 중으로 변경 완료 - petId: {}, 이전 상태: {}",
+                petId, pet.getStatus());
     }
 
     public void markAsAvailable(Long petId, Long userId, String userRole) {
@@ -115,11 +131,14 @@ public class PetService {
         Pet pet = findById(petId);
         validateShelterAuthority(userId, userRole, pet);
 
+        // 멱등성: 이미 ADOPTED 상태면 스킵
         if (pet.getStatus() == PetStatus.ADOPTED) {
-            throw new IllegalStateException("이미 입양 완료된 펫입니다.");
+            log.info("이미 입양 완료된 펫입니다. 스킵합니다. petId: {}", petId);
+            return;
         }
 
         pet.markAsAdopted();
+        log.info("펫 입양 완료 처리 - petId: {}", petId);
     }
 
     private Pet findById(Long petId) {
