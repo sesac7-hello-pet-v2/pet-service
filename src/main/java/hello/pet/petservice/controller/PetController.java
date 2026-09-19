@@ -60,26 +60,26 @@ public class PetController {
     }
 
     @PatchMapping("/{petId}/mark-announced")
-    public ResponseEntity<Void> markAsAnnounced(@PathVariable Long petId,
+    public ResponseEntity<Void> changeToAnnounced(@PathVariable Long petId,
                                                 @RequestHeader("X-User-Id") Long userId,
                                                 @RequestHeader("X-User-Role") String userRole) {
-        petService.markAsAnnounced(petId, userId, userRole);
+        petService.changeToAnnounced(petId, userId, userRole);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{petId}/mark-available")
-    public ResponseEntity<Void> markAsAvailable(@PathVariable Long petId,
+    public ResponseEntity<Void> changeToAvailable(@PathVariable Long petId,
                                                 @RequestHeader("X-User-Id") Long userId,
                                                 @RequestHeader("X-User-Role") String userRole) {
-        petService.markAsAvailable(petId, userId, userRole);
+        petService.changeToAvailable(petId, userId, userRole);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{petId}/mark-adopted")
-    public ResponseEntity<Void> markAsAdopted(@PathVariable Long petId,
+    public ResponseEntity<Void> completeAdoption(@PathVariable Long petId,
                                               @RequestHeader("X-User-Id") Long userId,
                                               @RequestHeader("X-User-Role") String userRole) {
-        petService.markAsAdopted(petId, userId, userRole);
+        petService.completeAdoption(petId, userId, userRole);
         return ResponseEntity.noContent().build();
     }
 }

@@ -89,7 +89,7 @@ public class PetService {
         petRepository.save(pet);
     }
 
-    public void markAsAnnounced(Long petId, Long userId, String userRole) {
+    public void changeToAnnounced(Long petId, Long userId, String userRole) {
         log.info("펫 상태를 공고 중으로 변경 - petId: {}, userId: {}", petId, userId);
 
         Pet pet = findById(petId);
@@ -109,14 +109,14 @@ public class PetService {
             );
         }
 
-        pet.markAsAnnounced();
+        pet.changeToAnnounced();
         petRepository.save(pet);
 
         log.info("펫 상태를 공고 중으로 변경 완료 - petId: {}, 이전 상태: {}",
                 petId, pet.getStatus());
     }
 
-    public void markAsAvailable(Long petId, Long userId, String userRole) {
+    public void changeToAvailable(Long petId, Long userId, String userRole) {
         Pet pet = findById(petId);
         validateShelterAuthority(userId, userRole, pet);
 
@@ -124,10 +124,10 @@ public class PetService {
             throw new IllegalStateException("공고 중인 펫만 입양 가능 상태로 변경할 수 있습니다.");
         }
 
-        pet.markAsAvailable();
+        pet.changeToAvailable();
     }
 
-    public void markAsAdopted(Long petId, Long userId, String userRole) {
+    public void completeAdoption(Long petId, Long userId, String userRole) {
         Pet pet = findById(petId);
         validateShelterAuthority(userId, userRole, pet);
 
@@ -137,7 +137,7 @@ public class PetService {
             return;
         }
 
-        pet.markAsAdopted();
+        pet.completeAdoption();
         log.info("펫 입양 완료 처리 - petId: {}", petId);
     }
 
