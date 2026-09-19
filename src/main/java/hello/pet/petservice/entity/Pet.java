@@ -67,15 +67,15 @@ public class Pet {
 
     private LocalDateTime deletedAt;
 
-    public void markAsAnnounced() {
+    public void changeToAnnounced() {
         this.status = PetStatus.ANNOUNCED;
     }
 
-    public void markAsAvailable() {
+    public void changeToAvailable() {
         this.status = PetStatus.AVAILABLE;
     }
 
-    public void markAsAdopted() {
+    public void completeAdoption() {
         this.status = PetStatus.ADOPTED;
     }
 
